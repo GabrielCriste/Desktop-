@@ -17,7 +17,7 @@ RUN apt-get -y -qq update \
         xubuntu-icon-theme \
         fonts-dejavu \
         git \
-        make \
+        
      
     # Desabilitar o bloqueio automático de tela
  && apt-get -y -qq remove xfce4-screensaver \

@@ -17,6 +17,8 @@ RUN apt-get -y -qq update \
         xubuntu-icon-theme \
         fonts-dejavu \
         git \
+        wget \
+        software-properties-common \
         
      
     # Desabilitar o bloqueio automático de tela
@@ -25,8 +27,6 @@ RUN apt-get -y -qq update \
  && mkdir -p /opt/install \
  && chown -R $NB_UID:$NB_GID $HOME /opt/install \
  && rm -rf /var/lib/apt/lists/*
-
-
 
 # Instalar servidor VNC (TigerVNC como padrão)
 RUN apt-get -y -qq update && apt-get -y -qq install tigervnc-standalone-server && \
@@ -39,6 +39,14 @@ RUN wget -q -O- https://packagecloud.io/dcommander/turbovnc/gpgkey | \
     wget -O /etc/apt/sources.list.d/TurboVNC.list https://raw.githubusercontent.com/TurboVNC/repo/main/TurboVNC.list; \
     apt-get -y -qq update && apt-get -y -qq install turbovnc && \
     rm -rf /var/lib/apt/lists/*
+
+# Instalar Wine
+RUN dpkg --add-architecture i386 \
+ && wget -qO- https://dl.winehq.org/wine-builds/winehq.key | apt-key add - \
+ && apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main' \
+ && apt-get -y -qq update \
+ && apt-get -y -qq install --install-recommends winehq-stable \
+ && rm -rf /var/lib/apt/lists/*
 
 # Corrigir permissões no diretório do usuário
 RUN chown -R $NB_UID:$NB_GID $HOME
@@ -66,4 +74,3 @@ COPY --chown=$NB_UID:$NB_GID monitor.py /opt/install/monitor.py
 
 # Configurar inicialização do VNC e ambiente gráfico
 CMD ["start.sh"]
-

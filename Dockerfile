@@ -4,7 +4,7 @@ FROM quay.io/jupyter/base-notebook:2024-12-31
 # Executar comandos como root
 USER root
 
-# Instalar dependências do sistema
+# Instalar dependências do sistema e TurboVNC
 RUN apt-get update -qq && \
     apt-get install -y -qq --no-install-recommends \
         dbus-x11 \
@@ -17,17 +17,15 @@ RUN apt-get update -qq && \
         xubuntu-icon-theme \
         fonts-dejavu \
         git \
-        tigervnc-standalone-server && \
-    apt-get remove -y -qq xfce4-screensaver && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Instalar TurboVNC
-RUN wget -q -O- https://packagecloud.io/dcommander/turbovnc/gpgkey | \
-    gpg --dearmor > /etc/apt/trusted.gpg.d/TurboVNC.gpg && \
+        tigervnc-standalone-server \
+        wget \
+        gpg && \
+    wget -q -O- https://packagecloud.io/dcommander/turbovnc/gpgkey | \
+        gpg --dearmor > /etc/apt/trusted.gpg.d/TurboVNC.gpg && \
     echo "deb https://packagecloud.io/dcommander/turbovnc/ubuntu focal main" > /etc/apt/sources.list.d/TurboVNC.list && \
     apt-get update -qq && \
     apt-get install -y -qq turbovnc && \
+    apt-get remove -y -qq xfce4-screensaver && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

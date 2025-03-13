@@ -1,13 +1,12 @@
-
-# Base image 
-FROM quay.io/jupyter/base-notebook:2024-12-31
+# Base image
+FROM quay.io/jupyter/base-notebook:2023-07-31
 
 # Executar comandos como root
 USER root
 
 # Instalar dependências do sistema
 RUN apt-get -y -qq update \
- && apt-get -y -qq install \
+ && apt-get -y -qq install --no-install-recommends \
         dbus-x11 \
         xclip \
         xfce4 \
@@ -18,19 +17,13 @@ RUN apt-get -y -qq update \
         xubuntu-icon-theme \
         fonts-dejavu \
         git \
-        
-     
-    # Desabilitar o bloqueio automático de tela
  && apt-get -y -qq remove xfce4-screensaver \
-    # Corrigir permissões e criar diretório para pacotes adicionais
  && mkdir -p /opt/install \
  && chown -R $NB_UID:$NB_GID $HOME /opt/install \
  && rm -rf /var/lib/apt/lists/*
 
-
-
-# Instalar servidor VNC (TigerVNC como padrão)
-RUN apt-get -y -qq update && apt-get -y -qq install tigervnc-standalone-server && \
+# Instalar servidor VNC (TigerVNC)
+RUN apt-get -y -qq update && apt-get -y -qq install --no-install-recommends tigervnc-standalone-server && \
     rm -rf /var/lib/apt/lists/*
 
 # Configuração do TurboVNC (opcional)
@@ -38,7 +31,7 @@ ENV PATH=/opt/TurboVNC/bin:$PATH
 RUN wget -q -O- https://packagecloud.io/dcommander/turbovnc/gpgkey | \
     gpg --dearmor >/etc/apt/trusted.gpg.d/TurboVNC.gpg; \
     wget -O /etc/apt/sources.list.d/TurboVNC.list https://raw.githubusercontent.com/TurboVNC/repo/main/TurboVNC.list; \
-    apt-get -y -qq update && apt-get -y -qq install turbovnc && \
+    apt-get -y -qq update && apt-get -y -qq install --no-install-recommends turbovnc && \
     rm -rf /var/lib/apt/lists/*
 
 # Corrigir permissões no diretório do usuário
